@@ -31,8 +31,8 @@ def save():
     if len(website) == 0 or len(password) == 0:
         messagebox.showwarning(title="Warning", message="Please enter your information!")
     else:
-        is_okay = messagebox.askokcancel(title=website, message=f"These are the details entered: \n "
-                                                                f"Email: {email} \n Password: {password} \nAre these information correct?")
+        is_okay = messagebox.askokcancel(title=website, message=f"These are the details entered: \n"
+                                                                f"Website: {website} \nEmail: {email} \n")
 
         if is_okay:
             with open("data.txt", "a") as data_file:
@@ -64,7 +64,7 @@ enter_field_website.focus()
 enter_field_email = Entry(width=35)
 enter_field_email.grid(column=1, row=2, columnspan=2)
 enter_field_email.insert(END, "example@email.com")
-enter_password = Entry(width=21, text=gen_pass)
+enter_password = Entry(width=21, show='*')
 enter_password.grid(column=1, row=3)
 
 generate_password = Button(text="Generate Password", command=gen_pass)

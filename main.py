@@ -2,11 +2,15 @@ from tkinter import *
 from tkinter import messagebox
 from random import choice, randint, shuffle
 import pyperclip
+import json
+
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def gen_pass():
-    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-               'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+               'v',
+               'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
+               'R',
                'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
@@ -22,23 +26,38 @@ def gen_pass():
     enter_password.insert(0, password_generated)
     pyperclip.copy(password_generated)
 
+
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save():
     website = enter_field_website.get()
     email = enter_field_email.get()
     password = enter_password.get()
-
+    new_data = {
+        website: {
+            "email": email,
+            "password": password,
+        }
+    }
     if len(website) == 0 or len(password) == 0:
         messagebox.showwarning(title="Warning", message="Please enter your information!")
     else:
-        is_okay = messagebox.askokcancel(title=website, message=f"These are the details entered: \n"
-                                                                f"Website: {website} \nEmail: {email} \n")
+        try:
+            with open("data.json", "r") as data_file:
 
-        if is_okay:
-            with open("data.txt", "a") as data_file:
-                data_file.write(f"{website} | {email} | {password} \n")
-                enter_field_website.delete(0, END)
-                enter_password.delete(0, END)
+                # Reading old data
+                data = json.load(data_file)
+                # Updating old data with new data
+                data.update(new_data)
+            with open("data.json", "w") as data_file:
+                # Saving updated data
+                json.dump(data, data_file, indent=4)
+
+        except FileNotFoundError:
+            with open("data.json", "a") as data_file:
+                json.dump(new_data, data_file, indent=4)
+        finally:
+            enter_field_website.delete(0, END)
+            enter_password.delete(0, END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
